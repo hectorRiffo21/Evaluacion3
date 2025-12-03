@@ -1,40 +1,150 @@
-<h2>Crear Producto</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Producto</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
 
-{% if messages %}
-  <ul>
-  {% for m in messages %}
-     <li>{{ m }}</li>
-  {% endfor %}
-  </ul>
-{% endif %}
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-<form method="POST">
-    {% csrf_token %}
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
 
-    <label>Código:</label>
-    <input type="text" name="codigo">
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
 
-    <label>Nombre:</label>
-    <input type="text" name="nombre">
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="checkbox"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
 
-    <label>Categoría:</label>
-    <input type="text" name="categoria">
+        form input[type="checkbox"] {
+            width: auto;
+            margin-top: 8px;
+        }
 
-    <label>Stock:</label>
-    <input type="number" name="stock">
+        form button {
+            grid-column: 1 / -1;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-    <label>Stock mínimo:</label>
-    <input type="number" name="stock_minimo">
+        form button:hover {
+            background-color: #0056b3;
+        }
 
-    <label>Stock máximo:</label>
-    <input type="number" name="stock_maximo">
+        .volver {
+            display: inline-block;
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
 
-    <label>Precio:</label>
-    <input type="number" step="0.01" name="precio">
+        .volver:hover {
+            background-color: #495057;
+        }
 
-    <label>Activo:</label>
-    <input type="checkbox" name="activo">
+        ul {
+            max-width: 600px;
+            margin: 0 auto 15px auto;
+            padding: 10px 15px;
+            background-color: #ffe6e6;
+            border: 1px solid #ff4d4d;
+            color: #cc0000;
+            border-radius: 8px;
+            list-style: none;
+        }
 
-    <br><br>
-    <button type="submit">Guardar</button>
-</form>
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Crear Producto</h2>
+
+    {% if messages %}
+      <ul>
+      {% for m in messages %}
+         <li>{{ m }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Código:</label>
+        <input type="text" name="codigo">
+
+        <label>Nombre:</label>
+        <input type="text" name="nombre">
+
+        <label>Categoría:</label>
+        <input type="text" name="categoria">
+
+        <label>Stock:</label>
+        <input type="number" name="stock">
+
+        <label>Stock mínimo:</label>
+        <input type="number" name="stock_minimo">
+
+        <label>Stock máximo:</label>
+        <input type="number" name="stock_maximo">
+
+        <label>Precio:</label>
+        <input type="number" step="0.01" name="precio">
+
+        <label>Activo:</label>
+        <input type="checkbox" name="activo">
+
+        <button type="submit">Guardar</button>
+    </form>
+
+    <div style="max-width:600px; margin: 20px auto; text-align:center;">
+        <a href="javascript:history.back()" class="volver">Volver Atrás</a>
+    </div>
+
+</body>
+</html>

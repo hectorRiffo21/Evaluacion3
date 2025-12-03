@@ -1,58 +1,209 @@
-<h1>Listado de Productos</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Productos</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<!-- FORMULARIO DE BÚSQUEDA -->
-<form method="get" action="{% url 'productos:listar_productos' %}">
-    <input type="text" name="buscar" placeholder="Buscar..." value="{{ query }}">
-    <select name="filtro">
-        <option value="codigo" {% if filtro == 'codigo' %}selected{% endif %}>Código</option>
-        <option value="nombre" {% if filtro == 'nombre' %}selected{% endif %}>Nombre</option>
-        <option value="categoria" {% if filtro == 'categoria' %}selected{% endif %}>Categoría</option>
-    </select>
-    <button type="submit">Buscar</button>
-</form>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
 
-<!-- TABLA DE PRODUCTOS -->
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Stock Mínimo</th>
-            <th>Stock Máximo</th>
-            <th>Precio</th>
-            <th>Activo</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for producto in productos %}
-        <tr>
-            <td>{{ producto.codigo }}</td>
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.categoria }}</td>
-            <td>{{ producto.stock }}</td>
-            <td>{{ producto.stock_minimo }}</td>
-            <td>{{ producto.stock_maximo }}</td>
-            <td>{{ producto.precio }}</td>
-            <td>{{ producto.activo }}</td>
-            <td>
-                <a href="{% url 'productos:editar_producto' producto.codigo %}">Editar</a> |
-                <a href="{% url 'productos:eliminar_producto' producto.codigo %}">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="9">No se encontraron productos.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-<!-- BOTONES DE ACCIÓN -->
-<p>
-    <a href="{% url 'productos:crear_producto' %}">Registrar Nuevo Producto</a> |
-    <a href="{% url 'empleados:logout' %}">Cerrar Sesión</a> |
-    <a href="javascript:history.back()">Volver Atrás</a>
-</p>
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        input[type="text"], select, button {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        td a {
+            text-decoration: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 5px;
+            transition: 0.2s;
+        }
+
+        td a:hover {
+            opacity: 0.85;
+        }
+
+        .edit-btn {
+            background-color: #28a745;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .actions a {
+            display: inline-block;
+            padding: 10px 18px;
+            margin: 0 5px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .actions a {
+                padding: 8px 12px;
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Listado de Productos</h1>
+
+    <!-- FORMULARIO DE BÚSQUEDA -->
+    <form method="get" action="{% url 'productos:listar_productos' %}">
+        <input type="text" name="buscar" placeholder="Buscar..." value="{{ query }}">
+        <select name="filtro">
+            <option value="codigo" {% if filtro == 'codigo' %}selected{% endif %}>Código</option>
+            <option value="nombre" {% if filtro == 'nombre' %}selected{% endif %}>Nombre</option>
+            <option value="categoria" {% if filtro == 'categoria' %}selected{% endif %}>Categoría</option>
+        </select>
+        <button type="submit">Buscar</button>
+        <button type="submit" name="mostrar_todos" value="1">Mostrar Todos</button>
+    </form>
+
+    <!-- TABLA DE PRODUCTOS -->
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Stock Mínimo</th>
+                <th>Stock Máximo</th>
+                <th>Precio</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.codigo }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.categoria }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.stock_minimo }}</td>
+                <td>{{ producto.stock_maximo }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.activo }}</td>
+                <td>
+                    <a href="{% url 'productos:editar_producto' producto.codigo %}" class="edit-btn">Editar</a>
+                    <a href="{% url 'productos:eliminar_producto' producto.codigo %}" class="delete-btn">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align:center;">No se encontraron productos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="actions">
+        <a href="{% url 'productos:crear_producto' %}">Registrar Nuevo Producto</a>
+        <a href="{% url 'empleados:logout' %}">Cerrar Sesión</a>
+        <a href="javascript:history.back()">Volver Atrás</a>
+    </div>
+
+</body>
+</html>

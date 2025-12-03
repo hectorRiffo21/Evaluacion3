@@ -54,21 +54,32 @@ def crear_producto(request):
 
 @empleado_session_required
 def listar_productos(request):
-    # Tomamos el valor de búsqueda
-    query = request.GET.get("buscar", "")  # campo del formulario
-    filtro = request.GET.get("filtro", "nombre")  # por defecto buscar por nombre
+    query = request.GET.get("buscar", "")
+    filtro = request.GET.get("filtro", "nombre")
+    mostrar_todos = request.GET.get("mostrar_todos")
 
-    productos = Producto.objects.all()
-
-    if query:
+    if mostrar_todos:
+        # Mostrar todos los productos sin filtrar
+        productos = Producto.objects.all()
+    elif query:
+        # Filtrar según el campo seleccionado
         if filtro == "codigo":
-            productos = productos.filter(codigo__icontains=query)
+            productos = Producto.objects.filter(codigo__icontains=query)
         elif filtro == "nombre":
-            productos = productos.filter(nombre__icontains=query)
+            productos = Producto.objects.filter(nombre__icontains=query)
         elif filtro == "categoria":
-            productos = productos.filter(categoria__icontains=query)
+            productos = Producto.objects.filter(categoria__icontains=query)
+        else:
+            productos = Producto.objects.all()
+    else:
+        # Si no hay búsqueda, mostrar todos
+        productos = Producto.objects.all()
 
-    return render(request, "productos/listar.html", {"productos": productos, "query": query, "filtro": filtro})
+    return render(request, "productos/listar.html", {
+        "productos": productos,
+        "query": query,
+        "filtro": filtro
+    })
 
 
 @empleado_session_required

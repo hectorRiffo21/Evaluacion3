@@ -2,32 +2,155 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registrar Nuevo Empleado</title>
-</head>
-<body>
-    <h1>Registrar Nuevo Empleado</h1>
+    <title>Registrar Empleado</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <!-- Mensaje de error -->
-    {% if mensaje_error %}
-        <p style="color:red; font-weight:bold;">{{ mensaje_error }}</p>
-    {% endif %}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Registrar</button>
-    </form>
+        .register-card {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 600px;
+            transition: transform 0.3s;
+        }
 
-    <div style="margin-top: 20px;">
-        <a href="{% url 'empleados:login' %}" style="
+        .register-card:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: #333333;
+            text-align: center;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #842029;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        form input,
+        form select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        form input:focus,
+        form select:focus {
+            border-color: #2575fc;
+            box-shadow: 0 0 5px rgba(37,117,252,0.5);
+            outline: none;
+        }
+
+        /* Botón de registrarse ocupa toda la fila */
+        form button {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background-color: #2575fc;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        form button:hover {
+            background-color: #1454c6;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-link a {
             display: inline-block;
-            padding: 8px 16px;
-            background-color: #007BFF;
+            padding: 10px 18px;
+            background-color: #6c757d;
             color: white;
             text-decoration: none;
-            border-radius: 4px;
-        ">Volver al Login</a>
-    </div>
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
+        .back-link a:hover {
+            background-color: #495057;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            form button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <h1>Registrarse</h1>
+
+        {% if mensaje_error %}
+            <p class="error-message">{{ mensaje_error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <div class="back-link">
+            <a href="javascript:history.back()">Volver atrás</a>
+        </div>
+    </div>
 </body>
 </html>

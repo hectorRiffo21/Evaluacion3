@@ -6,6 +6,8 @@ from django.contrib import messages
 from .forms import RegistroForm
 from .models import Empleado
 from django.contrib.auth.hashers import check_password
+from .forms import RegistroForm, EmpleadoEditForm
+
 
 
 # Decorador para proteger vistas
@@ -43,16 +45,20 @@ def registrar_empleado(request):
 
     return render(request, "empleados/registrar.html", {"form": form, "mensaje_error": mensaje_error})
 
-def editar_empleado(request, pk):
-    empleado = get_object_or_404(Empleado, pk=pk)
-    if request.method == 'POST':
-        form = RegistroForm(request.POST, instance=empleado)
+def editar_empleado(request, nombre_usuario):
+    # Buscamos el empleado por nombre_usuario
+    empleado = get_object_or_404(Empleado, nombre_usuario=nombre_usuario)
+    
+    if request.method == "POST":
+        form = EmpleadoEditForm(request.POST, instance=empleado)  # <--- Cambiado
         if form.is_valid():
             form.save()
-            return redirect('empleados:listar')
+            messages.success(request, "Empleado actualizado correctamente")
+            return redirect("empleados:listar")
     else:
-        form = RegistroForm(instance=empleado)
-    return render(request, 'empleados/editar.html', {'form': form, 'empleado': empleado})
+        form = EmpleadoEditForm(instance=empleado)  # <--- Cambiado
+
+    return render(request, "empleados/editar.html", {"form": form, "empleado": empleado})
 
 # Eliminar empleado
 def eliminar_empleado(request, pk):

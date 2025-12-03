@@ -1,6 +1,7 @@
 from django import forms
 from .models import Empleado
 
+# Formulario para registrar un nuevo empleado
 class RegistroForm(forms.ModelForm):
     confirmar_clave = forms.CharField(widget=forms.PasswordInput, label="Confirmar clave")
 
@@ -31,3 +32,22 @@ class RegistroForm(forms.ModelForm):
         confirmar = cleaned_data.get("confirmar_clave")
         if clave != confirmar:
             self.add_error("confirmar_clave", "Las claves no coinciden")
+
+
+# Formulario para editar un empleado existente (no pide confirmar clave)
+class EmpleadoEditForm(forms.ModelForm):
+    class Meta:
+        model = Empleado
+        fields = [
+            "nombre_usuario",
+            "nombre",
+            "apellido",
+            "rut",
+            "celular",
+            "correo_electronico",
+            "genero",
+            "cargo_trabajo",
+        ]
+        labels = {
+            "nombre_usuario": "Nombre de usuario",
+        }
