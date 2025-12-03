@@ -1,0 +1,40 @@
+<h2>Crear Producto</h2>
+
+{% if messages %}
+  <ul>
+  {% for m in messages %}
+     <li>{{ m }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Código:</label>
+    <input type="text" name="codigo">
+
+    <label>Nombre:</label>
+    <input type="text" name="nombre">
+
+    <label>Categoría:</label>
+    <input type="text" name="categoria">
+
+    <label>Stock:</label>
+    <input type="number" name="stock">
+
+    <label>Stock mínimo:</label>
+    <input type="number" name="stock_minimo">
+
+    <label>Stock máximo:</label>
+    <input type="number" name="stock_maximo">
+
+    <label>Precio:</label>
+    <input type="number" step="0.01" name="precio">
+
+    <label>Activo:</label>
+    <input type="checkbox" name="activo">
+
+    <br><br>
+    <button type="submit">Guardar</button>
+</form>
