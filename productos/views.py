@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from django.contrib import messages
 from .models import Producto
 from decimal import Decimal
+from empleados.views import empleado_session_required
+
+
+@empleado_session_required
 def crear_producto(request):
     if request.method == "POST":
         codigo = request.POST.get("codigo")
@@ -48,15 +52,26 @@ def crear_producto(request):
 
     return render(request, "productos/crear.html")
 
-
+@empleado_session_required
 def listar_productos(request):
+    # Tomamos el valor de búsqueda
+    query = request.GET.get("buscar", "")  # campo del formulario
+    filtro = request.GET.get("filtro", "nombre")  # por defecto buscar por nombre
+
     productos = Producto.objects.all()
-    return render(request, "productos/listar.html", {"productos": productos})
+
+    if query:
+        if filtro == "codigo":
+            productos = productos.filter(codigo__icontains=query)
+        elif filtro == "nombre":
+            productos = productos.filter(nombre__icontains=query)
+        elif filtro == "categoria":
+            productos = productos.filter(categoria__icontains=query)
+
+    return render(request, "productos/listar.html", {"productos": productos, "query": query, "filtro": filtro})
 
 
-
-
-
+@empleado_session_required
 def eliminar_producto(request, codigo):
     producto = get_object_or_404(Producto, codigo=codigo)
     if request.method == "POST":
@@ -65,7 +80,7 @@ def eliminar_producto(request, codigo):
         return redirect("productos:listar_productos")
     return render(request, "productos/eliminar.html",{"producto":producto})
 
-
+@empleado_session_required
 def editar_producto(request, codigo):
     try:
         producto = Producto.objects.get(codigo=codigo)

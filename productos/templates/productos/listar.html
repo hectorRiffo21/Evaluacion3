@@ -1,2 +1,58 @@
 <h1>Listado de Productos</h1>
-<p>Aquí se mostrarán los productos registrados.</p>
+
+<!-- FORMULARIO DE BÚSQUEDA -->
+<form method="get" action="{% url 'productos:listar_productos' %}">
+    <input type="text" name="buscar" placeholder="Buscar..." value="{{ query }}">
+    <select name="filtro">
+        <option value="codigo" {% if filtro == 'codigo' %}selected{% endif %}>Código</option>
+        <option value="nombre" {% if filtro == 'nombre' %}selected{% endif %}>Nombre</option>
+        <option value="categoria" {% if filtro == 'categoria' %}selected{% endif %}>Categoría</option>
+    </select>
+    <button type="submit">Buscar</button>
+</form>
+
+<!-- TABLA DE PRODUCTOS -->
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Stock</th>
+            <th>Stock Mínimo</th>
+            <th>Stock Máximo</th>
+            <th>Precio</th>
+            <th>Activo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.codigo }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.stock }}</td>
+            <td>{{ producto.stock_minimo }}</td>
+            <td>{{ producto.stock_maximo }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>{{ producto.activo }}</td>
+            <td>
+                <a href="{% url 'productos:editar_producto' producto.codigo %}">Editar</a> |
+                <a href="{% url 'productos:eliminar_producto' producto.codigo %}">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">No se encontraron productos.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- BOTONES DE ACCIÓN -->
+<p>
+    <a href="{% url 'productos:crear_producto' %}">Registrar Nuevo Producto</a> |
+    <a href="{% url 'empleados:logout' %}">Cerrar Sesión</a> |
+    <a href="javascript:history.back()">Volver Atrás</a>
+</p>

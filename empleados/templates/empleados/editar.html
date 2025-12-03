@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Empleado</title>
+</head>
+<body>
+    <h1>Editar Empleado: {{ empleado.nombre_usuario }}</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color:red;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'empleados:listar' %}" style="
+            display:inline-block;
+            padding:8px 16px;
+            background-color:#007BFF;
+            color:white;
+            text-decoration:none;
+            border-radius:4px;">Volver a la Lista</a>
+    </div>
+</body>
+</html>

@@ -35,18 +35,23 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Apps de Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'inventario',
-    # APPSde mi proyecto
+
+    # Tus apps
     'empleados',
     'productos',
     'movimientos',
+    'inventario',
 ]
+
+#AUTH_USER_MODEL = 'empleados.Empleado'  # <--- MUY IMPORTANTE
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,7 +68,7 @@ ROOT_URLCONF = 'inventario_proyect.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # <- tu carpeta global de plantillas
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,11 +81,14 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'inventario_proyect.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# Indica que Django use nuestro modelo Empleado para usuarios
 
 
 

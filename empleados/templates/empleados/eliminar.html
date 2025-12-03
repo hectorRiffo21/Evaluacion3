@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Empleado</title>
+</head>
+<body>
+    <h1>Eliminar Empleado: {{ empleado.nombre_usuario }}</h1>
+    <p>¿Estás seguro de que deseas eliminar a este empleado?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" style="background-color:#dc3545;color:white;padding:8px 16px;border:none;border-radius:4px;">Eliminar</button>
+    </form>
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'empleados:listar' %}" style="
+            display:inline-block;
+            padding:8px 16px;
+            background-color:#007BFF;
+            color:white;
+            text-decoration:none;
+            border-radius:4px;">Volver a la Lista</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Empleados</title>
+</head>
+<body>
+    <h1>Lista de Empleados</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color:red;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Rut</th>
+            <th>Celular</th>
+            <th>Correo</th>
+            <th>Género</th>
+            <th>Cargo</th>
+            <th>Acciones</th>
+        </tr>
+        {% for emp in empleados %}
+        <tr>
+            <td>{{ emp.nombre_usuario }}</td>
+            <td>{{ emp.nombre }}</td>
+            <td>{{ emp.apellido }}</td>
+            <td>{{ emp.rut }}</td>
+            <td>{{ emp.celular }}</td>
+            <td>{{ emp.correo_electronico }}</td>
+            <td>{{ emp.genero }}</td>
+            <td>{{ emp.cargo_trabajo }}</td>
+            <td>
+                <a href="{% url 'empleados:editar' emp.pk %}">Editar</a> |
+                <a href="{% url 'empleados:eliminar' emp.pk %}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'empleados:registrar' %}" style="
+            display:inline-block;
+            padding:8px 16px;
+            background-color:#28a745;
+            color:white;
+            text-decoration:none;
+            border-radius:4px;">Registrar Nuevo Empleado</a>
+        <a href="{% url 'empleados:login' %}" style="
+            display:inline-block;
+            padding:8px 16px;
+            background-color:#007BFF;
+            color:white;
+            text-decoration:none;
+            border-radius:4px;">Volver al Login</a>
+    </div>
+</body>
+</html>
