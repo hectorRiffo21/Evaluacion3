@@ -1,102 +1,121 @@
-from functools import wraps
-from django.shortcuts import render, redirect, get_object_or_404
-from django.shortcuts import render, redirect
-from django.db import IntegrityError
-from django.contrib import messages
-from .forms import RegistroForm
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin 
+from django.contrib.auth.hashers import make_password 
 from .models import Empleado
-from django.contrib.auth.hashers import check_password
-from .forms import RegistroForm, EmpleadoEditForm
+from .forms import EmpleadoForm
+from .mixins import AdminRequiredMixin, CacheControlMixin 
+from django.shortcuts import get_object_or_404 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 
 
-# Decorador para proteger vistas
-def empleado_session_required(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        if not request.session.get('empleado_id'):
-            return redirect('/empleados/login/?next=' + request.path)
-        return view_func(request, *args, **kwargs)
-    return wrapper
+# Listar los empleados
+class EmpleadoListView(LoginRequiredMixin, AdminRequiredMixin, CacheControlMixin, ListView):
+    model = Empleado
+    template_name = 'empleados/empleado_list.html' 
+    context_object_name = 'empleados' 
+    paginate_by = 10 
 
-# Registro de empleado
-def listar_empleados(request):
-    empleados = Empleado.objects.all()
-    return render(request, 'empleados/listar.html', {'empleados': empleados})
+# Crear empleado
+class EmpleadoCreateView(LoginRequiredMixin, AdminRequiredMixin, CacheControlMixin, CreateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    template_name = 'empleados/empleado_form.html'
+    success_url = reverse_lazy('empleado_list') 
 
+    # Sobreescribir form_valid para hashear la contraseña solo en la creación
+    def form_valid(self, form):
+        nueva_contrasena = form.cleaned_data.get('password')
+        if nueva_contrasena:
+            # Hashear y guardar la contraseña nueva
+            form.instance.password = make_password(nueva_contrasena)
+        return super().form_valid(form)
 
-def registrar_empleado(request):
-    mensaje_error = ""
+# actualizar empleado
+class EmpleadoUpdateView(LoginRequiredMixin, AdminRequiredMixin, CacheControlMixin, UpdateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    template_name = 'empleados/empleado_form.html'
+    success_url = reverse_lazy('empleado_list') 
+    cancel_url = reverse_lazy('empleado_list')
     
-    if request.method == "POST":
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            try:
-                empleado = form.save(commit=False)  # No guardar aún
-                empleado.set_password(form.cleaned_data['clave'])  # Aplica hash
-                empleado.save()  # Ahora sí guarda con la contraseña hasheada
-                return redirect("empleados:login")  # Redirige al login
-            except IntegrityError:
-                mensaje_error = "El usuario ya existe. Por favor, elige otro."
+    # Previene que se exija la contraseña al editar
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        if form.instance.pk:
+
+             if not form.instance.password: 
+                 form.fields['password'].required = False
+             else:
+                 form.fields['password'].required = False
+        return form
+
+
+    def form_valid(self, form):
+        empleado_instance = form.instance
+        nueva_contrasena = form.cleaned_data.get('password')
+
+
+        if nueva_contrasena and nueva_contrasena not in [empleado_instance.password, '']: 
+            empleado_instance.password = make_password(nueva_contrasena)
         else:
-            mensaje_error = "Formulario inválido. Revisa los datos ingresados."
-    else:
-        form = RegistroForm()
 
-    return render(request, "empleados/registrar.html", {"form": form, "mensaje_error": mensaje_error})
+            empleado_instance.password = self.get_object().password
 
-def editar_empleado(request, nombre_usuario):
-    # Buscamos el empleado por nombre_usuario
-    empleado = get_object_or_404(Empleado, nombre_usuario=nombre_usuario)
+        return super().form_valid(form)
+
+
+# eliminar empleado
+class EmpleadoDeleteView(LoginRequiredMixin, AdminRequiredMixin, CacheControlMixin, DeleteView):
+    model = Empleado
+    template_name = 'empleados/empleado_confirm_delete.html'
+    context_object_name = 'empleado' 
+    success_url = reverse_lazy('empleado_list') 
+
+
+
+# editar mi propio perfil
+class PerfilUpdateView(LoginRequiredMixin, CacheControlMixin, UpdateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    template_name = 'empleados/empleado_form.html'
+    success_url = reverse_lazy('dashboard') 
+    cancel_url = reverse_lazy('dashboard')
     
-    if request.method == "POST":
-        form = EmpleadoEditForm(request.POST, instance=empleado)  # <--- Cambiado
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Empleado actualizado correctamente")
-            return redirect("empleados:listar")
-    else:
-        form = EmpleadoEditForm(instance=empleado)  # <--- Cambiado
+    def get_object(self, queryset=None):
+        
+        return self.request.user
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields.pop('cargo_trabajo', None)
+        if 'password' in form.fields:
+            form.fields['password'].required = False
+        return form
+    
+    def form_valid(self, form):
+        empleado_instance = form.instance
+        nueva_contrasena = form.cleaned_data.get('password')
 
-    return render(request, "empleados/editar.html", {"form": form, "empleado": empleado})
 
-# Eliminar empleado
-def eliminar_empleado(request, pk):
-    empleado = get_object_or_404(Empleado, pk=pk)
-    if request.method == 'POST':
-        empleado.delete()
-        return redirect('empleados:listar')
-    return render(request, 'empleados/eliminar.html', {'empleado': empleado})
+        empleado_original = Empleado.objects.get(pk=empleado_instance.pk)
 
-def iniciar_sesion(request):
-    if request.method == "POST":
-        usuario = request.POST.get("usuario")
-        clave = request.POST.get("clave")
+        if nueva_contrasena:
 
-        try:
-            empleado = Empleado.objects.get(nombre_usuario=usuario)
+            empleado_instance.password = make_password(nueva_contrasena)
+        else:
 
-            # Verificar la contraseña usando check_password (Django maneja PBKDF2)
-            if check_password(clave, empleado.clave):
-                # Guardar datos en sesión
-                request.session['empleado_id'] = empleado.nombre_usuario
-                request.session['empleado_cargo'] = empleado.cargo_trabajo
-                if empleado.cargo_trabajo.lower() == 'administrador':
+            empleado_instance.password = empleado_original.password
 
-                    return redirect('/empleados/listar/')
-                else:
-                    return redirect('/inventario/productos/listar/')
+        return super().form_valid(form)
+    
+class PerfilDetalleView(LoginRequiredMixin, CacheControlMixin, DetailView):
+    model = Empleado
+    template_name = 'empleados/perfil_detalle.html' 
+    context_object_name = 'empleado'
 
-            else:
-                # Contraseña incorrecta
-                return render(request, "empleados/login.html", {"error": "Usuario o clave incorrecta"})
-
-        except Empleado.DoesNotExist:
-            # Usuario no existe
-            return render(request, "empleados/login.html", {"error": "Usuario o clave incorrecta"})
-
-    # Si no es POST, mostrar formulario
-    return render(request, "empleados/login.html")
-def cerrar_sesion(request):
-    request.session.flush()
-    return redirect("empleados:login")
+    def get_object(self, queryset=None):
+        return self.request.user

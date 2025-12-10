@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block titulo %}Sistema de Inventario{% endblock titulo %}</title>
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+    </style>
+
+    {# ← BLOQUE EXTRA_HEAD AGREGADO AQUÍ #}
+    {% block extra_head %}{% endblock extra_head %}
+
+</head>
+
+<body class="d-flex flex-column">
+
+<div id="wrapper-content" class="flex-grow-1">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="bi bi-box-seam"></i> Sistema Inventario
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
+                                <i class="bi bi-house-door"></i> Inicio
+                            </a>
+                        </li>
+                        
+                        {% if user.is_staff or user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'empleado_list' %}">
+                                <i class="bi bi-people"></i> Empleados
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inventario_list' %}">
+                                <i class="bi bi-boxes"></i> Inventario
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'movimiento_list' %}">
+                                <i class="bi bi-arrow-left-right"></i> Movimientos
+                            </a>
+                        </li>
+                        
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> {{ user.nombre }} ({{ user.cargo_trabajo }})
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'perfil_detalle' %}">Mi Perfil</a></li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="bi bi-door-open"></i> Iniciar Sesión
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock content %}
+    </div>
+
+</div>
+
+<footer class="bg-dark text-white p-3 mt-auto">
+    <div class="container text-start">
+        <p class="mb-0">
+            © {% now "Y" %} Sistema de Inventario Profesional. | Desarrollado por Hector Riffo.<br>
+            <small>Versión Beta 1.0. | Powered by Django & Bootstrap.</small>
+        </p>
+    </div>
+</footer>
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+{# ← BLOQUE EXTRA_SCRIPTS AGREGADO AQUÍ #}
+{% block extra_scripts %}{% endblock extra_scripts %}
+
+</body>
+</html>

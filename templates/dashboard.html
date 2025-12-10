@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block titulo %}Dashboard Principal{% endblock titulo %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="row mt-4">
+
+            {% if user.es_administrador %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-people-fill"></i> Gestión de Empleados</h5>
+                        <p class="card-text">Accede al CRUD para crear, editar y eliminar cuentas de empleados.</p>
+                        <a href="{% url 'empleado_list' %}" class="btn btn-primary">Ir a Empleados</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-box-seam-fill"></i> Gestión de Inventario</h5>
+                        <p class="card-text">Gestiona el inventario, registra productos y revisa el stock.</p>
+                        <a href="{% url 'inventario_list' %}" class="btn btn-success">Ir a Inventario</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-arrow-left-right"></i> Registro de Movimientos</h5>
+                        <p class="card-text">Registra entradas y salidas de productos y consulta el historial de transacciones.</p>
+                        <a href="{% url 'movimiento_list' %}" class="btn btn-info text-white">Ir a Movimientos</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-cloud-sun-fill"></i> Clima Actual Santiago</h5>
+                        <p class="card-text" id="clima">Cargando clima...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function cargarClima() {
+        try {
+            const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=-33.45&longitude=-70.6667&current_weather=true");
+            const data = await response.json();
+            const temperatura = data.current_weather.temperature;
+            const viento = data.current_weather.windspeed;
+            document.getElementById("clima").innerText = `Temperatura: ${temperatura}°C | Velocidad del viento: ${viento} km/h`;
+        } catch (error) {
+            document.getElementById("clima").innerText = "No se pudo cargar el clima.";
+        }
+    }
+    cargarClima();
+</script>
+
+{% endblock content %}

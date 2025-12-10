@@ -44,13 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Tus apps
+    'accounts',
     'empleados',
-    'productos',
-    'movimientos',
     'inventario',
+    'transacciones',
 ]
 
-#AUTH_USER_MODEL = 'empleados.Empleado'  # <--- MUY IMPORTANTE
+
 
 
 MIDDLEWARE = [
@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'inventario_proyect.middleware.NoCacheMiddleware',
+
 ]
 
 ROOT_URLCONF = 'inventario_proyect.urls'
@@ -68,7 +70,7 @@ ROOT_URLCONF = 'inventario_proyect.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # <- tu carpeta global de plantillas
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,10 +87,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'inventario_proyect.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Indica que Django use nuestro modelo Empleado para usuarios
 
 
 
@@ -135,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -145,9 +144,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), 
+
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'empleados.Empleado'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'   
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

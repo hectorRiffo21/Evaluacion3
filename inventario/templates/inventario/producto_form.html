@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    {% if form.instance.pk %}Editar Producto: {{ form.instance.nombre }}{% else %}Crear Nuevo Producto{% endif %}
+{% endblock titulo %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0">
+                    {% if form.instance.pk %}
+                        <i class="bi bi-pencil-square"></i> Editar Producto: {{ form.instance.nombre }}
+                    {% else %}
+                        <i class="bi bi-box-seam"></i> Registrar Nuevo Producto
+                    {% endif %}
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row">
+                        {% for field in form %}
+                            {# Asegúrate de que 'categoria_nombre' se renderice correctamente en tu ProductoForm #}
+                            {# Si el campo 'categoria' no se debe mostrar, el filtro está correcto #}
+                            {% if field.name != 'categoria' %} 
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-save"></i> Guardar Producto
+                    </button>
+                    
+                    {# ⬇️ SOLUCIÓN: Cambiado 'producto_list' a 'inventario_list' ⬇️ #}
+                    <a href="{% url 'inventario_list' %}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

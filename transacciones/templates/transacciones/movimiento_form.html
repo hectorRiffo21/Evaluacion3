@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block titulo %}Registrar Movimiento{% endblock titulo %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="bi bi-arrow-left-right"></i> Registrar Nuevo Movimiento</h4>
+            </div>
+            <div class="card-body">
+                {% include 'partials/messages.html' %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="{% url 'movimiento_list' %}" class="btn btn-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-success">Guardar Movimiento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

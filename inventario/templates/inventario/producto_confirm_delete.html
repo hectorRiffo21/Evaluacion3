@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Confirmar Eliminación{% endblock titulo %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-danger">Confirmar Eliminación</h2>
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> ¿Estás seguro?</h4>
+            <p>Se eliminará permanentemente el producto:</p>
+            <h5 class="mb-3">**{{ object.nombre }}** (Cód: {{ object.codigo }})</h5>
+            <p class="mb-0">Esta acción no se puede deshacer.</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Sí, Eliminar Permanentemente
+            </button>
+            
+            {# ⬇️ CORRECCIÓN: Usar 'inventario_list' ⬇️ #}
+            <a href="{% url 'inventario_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock content %}

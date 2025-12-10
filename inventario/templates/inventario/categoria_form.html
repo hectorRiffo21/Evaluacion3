@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Nueva Categoría{% endblock titulo %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3>Registrar Nueva Categoría</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label">Nombre de la Categoría</label>
+                        {{ form.nombre }}
+                        {% for error in form.nombre.errors %}
+                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'categoria_list' %}" class="btn btn-secondary me-2">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
