@@ -16,8 +16,6 @@ class AdminRequiredMixin(AccessMixin):
 class CacheControlMixin:
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        # El decorador 'never_cache' agrega los encabezados Cache-Control y Pragma
         response = super().dispatch(*args, **kwargs)
-        # Añadimos un encabezado extra para máxima compatibilidad
         response['Expires'] = '0' 
         return response

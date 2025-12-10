@@ -42,7 +42,7 @@ class Movimiento(models.Model):
     def __str__(self):
         return f"{self.tipo} de {self.cantidad} de {self.producto.nombre} - {self.descripcion or 'Sin descripción'}"
 
-    # ⬇️ Actualización automática de stock
+   
     def save(self, *args, **kwargs):
         # Solo actualizar stock si es un movimiento nuevo
         if not self.pk:
